@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f0">
+  <meta name="description" content="ブラウザで遊べる3Dルービックキューブ。色のマスをドラッグして、指の動きでキューブを回そう。">
+  <title>CUBE STUDIO | ルービックキューブ</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23212724'/%3E%3Cpath d='M7 7h8v8H7zm10 0h8v8h-8zM7 17h8v8H7z' fill='%23cbef76'/%3E%3Cpath d='M17 17h8v8h-8z' fill='%23f09056'/%3E%3C/svg%3E">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap');
+:root{font-family:'DM Sans','Noto Sans JP',sans-serif;color:#252e28;background:#f5f5f0;font-synthesis:none;--line:#e3e5dc;--muted:#82877e;--green:#d6ee92;--ink:#252e28}*{box-sizing:border-box}body{margin:0}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer;color:inherit}button:focus-visible,a:focus-visible,.scene:focus-visible{outline:3px solid #7ba24a;outline-offset:4px}button:disabled{cursor:default;opacity:.35}button{transition:background .18s,transform .18s}button:not(:disabled):active{transform:translateY(1px)}.app-shell{max-width:1280px;margin:auto;padding:0 54px}.header{height:104px;display:flex;align-items:center;border-bottom:1px solid var(--line);gap:24px}.brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-size:19px;font-weight:700;letter-spacing:-.6px}.brand-light{font-weight:400;margin-left:-5px}.brand-mark{display:grid;grid-template-columns:repeat(2,8px);gap:3px;background:var(--ink);padding:7px;border-radius:8px;margin-right:5px}.brand-mark i{width:8px;height:8px;border-radius:1px;background:var(--green)}.brand-mark i:last-child{background:#ed9655}.header-note{font-size:11px;color:#858a81;flex:1;text-align:center;letter-spacing:1px}.help-button{border:1px solid #d9ddd1;background:transparent;border-radius:24px;display:flex;align-items:center;gap:10px;padding:9px 15px;font-size:13px}.help-button:hover{background:#e9eddf}.help-button span{font-size:11px}.intro{display:flex;justify-content:space-between;align-items:center;margin:36px 0 28px}.eyebrow{font-size:10px;letter-spacing:2px;font-weight:600;display:flex;align-items:center;gap:7px;color:#6e7767;margin:0 0 11px}.eyebrow>span{width:6px;height:6px;background:#88a55b;border-radius:50%}h1{font-size:30px;letter-spacing:-1px;line-height:1.4;margin:0;font-weight:600}.intro-copy{font-size:12px;color:#7b8276;margin:11px 0 0;letter-spacing:.5px}.cube-label{border:1px solid #dfe3d8;border-radius:10px;display:flex;align-items:center;gap:12px;padding:12px 19px}.label-grid{font-size:29px;color:#819171}.cube-label strong{font-size:11px;font-weight:500;display:block}.cube-label small{display:block;font-size:10px;color:var(--muted);margin-top:5px;letter-spacing:2px}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px}.play-panel{background:#eceedf;border:1px solid #e0e4d2;border-radius:18px;overflow:hidden;position:relative;min-width:0}.play-top{display:flex;justify-content:space-between;align-items:center;padding:23px 24px 0;position:relative;z-index:1}.status-pill{display:flex;align-items:center;gap:7px;background:#ffffff80;border:1px solid #ffffff90;border-radius:30px;padding:8px 12px;font-size:10px;color:#68745d}.status-pill i{width:5px;height:5px;background:#93a577;border-radius:50%}.status-pill.playing i{background:#ed9655}.text-button{background:none;border:0;font-size:10px;color:#78816e;padding:8px}.text-button span{font-size:15px;margin-right:4px}.scene{height:363px;position:relative;display:flex;justify-content:center;align-items:center;perspective:1100px;cursor:grab;touch-action:none;user-select:none;isolation:isolate}.scene:active{cursor:grabbing}.orbit{position:relative;width:0;height:0;transform-style:preserve-3d;transform:rotateX(-24deg) rotateY(-34deg);z-index:2;margin-top:-8px}.cube{position:relative;width:0;height:0;transform-style:preserve-3d}.cubie{position:absolute;width:80px;height:80px;left:-40px;top:-40px;transform-style:preserve-3d}.cubie-face{position:absolute;width:80px;height:80px;border-radius:5px;background:#232923;backface-visibility:hidden;display:flex;align-items:center;justify-content:center}.sticker{position:absolute;inset:5px;border-radius:4px;box-shadow:inset 0 1px 1px #ffffff55,inset 0 -2px 1px #00000019}.sticker.center::after{content:'·';position:absolute;left:0;right:0;top:22px;text-align:center;font-size:17px;font-weight:700;color:#00000018}.cubie-face[data-side=F]{transform:translateZ(40px)}.cubie-face[data-side=B]{transform:rotateY(180deg) translateZ(40px)}.cubie-face[data-side=R]{transform:rotateY(90deg) translateZ(40px)}.cubie-face[data-side=L]{transform:rotateY(-90deg) translateZ(40px)}.cubie-face[data-side=U]{transform:rotateX(90deg) translateZ(40px)}.cubie-face[data-side=D]{transform:rotateX(-90deg) translateZ(40px)}.ground-shadow{position:absolute;bottom:37px;width:270px;height:36px;border-radius:50%;background:#778265;filter:blur(21px);opacity:.22;z-index:-1;pointer-events:none}.drag-hint{display:flex;justify-content:center;align-items:center;gap:8px;color:#858d79;font-size:10px;letter-spacing:.5px;margin:0 0 23px}.stats{display:flex;align-items:center;gap:50px;border-top:1px solid #dce1cd;margin:0 24px;padding:19px 5px 22px}.stats>div{display:flex;flex-direction:column;gap:7px}.stats span{font-size:10px;color:#838c76}.stats strong{font-size:23px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.5px;line-height:1}.stats small{font-size:11px;color:#909783;font-weight:400;letter-spacing:0}.undo{margin-left:auto;display:flex;align-items:center;gap:7px;background:transparent;border:1px solid #d4dbc3;border-radius:8px;padding:9px 13px;font-size:10px}.undo span{font-size:19px}.control-panel{background:#fdfdf9;border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column}.panel-heading{display:flex;align-items:center;justify-content:space-between}.panel-heading h2{font-size:15px;font-weight:600;margin:0}.panel-heading>span{font-size:9px;letter-spacing:1.5px;color:#92968a}.panel-copy{font-size:10px;color:#8c9185;margin:9px 0 21px}.direction{display:flex;padding:4px;gap:3px;background:#f0f1e9;border-radius:9px}.direction button{flex:1;white-space:nowrap;border:0;border-radius:6px;background:transparent;font-size:10px;padding:9px 1px;color:#939888}.direction span{font-size:16px;vertical-align:-1px;margin-right:4px}.direction .active{color:#35402c;background:white;box-shadow:0 1px 4px #363f2112}.face-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:19px}.face-button{border:1px solid #e2e5da;background:transparent;border-radius:9px;display:flex;flex-direction:column;align-items:center;padding:12px 0 10px;gap:4px;position:relative}.face-button:hover{background:#f2f5e7;border-color:#aab88e}.face-button strong{font-size:22px;font-weight:500;line-height:1.2}.face-button>span:last-child{font-size:9px;color:#939889}.face-dot{height:7px;width:7px;background:var(--face);border-radius:2px;margin-bottom:2px}.face-dot.white{border:1px solid #d4d4c8}.keyboard-hint{color:#999e92;font-size:9px;text-align:center;margin:15px 0 22px}kbd{font:9px 'DM Sans',sans-serif;border:1px solid #e1e4d9;border-bottom-width:2px;background:#fafbf5;padding:2px 5px;border-radius:4px}.actions{display:flex;flex-direction:column;gap:9px}.primary-button{display:flex;gap:10px;align-items:center;justify-content:center;background:var(--green);border:1px solid #cce68a;border-radius:9px;font-size:11px;font-weight:600;padding:14px 8px;min-height:45px}.primary-button:hover{background:#cbe882}.reset-button{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border-radius:8px;border:1px solid #e3e6db;background:transparent;font-size:10px;color:#7f8776}.reset-button:hover{background:#f4f5ef}.reset-button span{font-size:17px}.tip{display:flex;gap:9px;align-items:flex-start;margin-top:auto;padding-top:20px}.tip-icon{font-size:18px;color:#91a969}.tip p{font-size:9px;line-height:1.9;color:#979e8d;margin:0}.tip strong{display:block;color:#737f63;font-size:10px;font-weight:500}.history-panel{display:flex;align-items:center;gap:22px;margin-top:19px;padding:18px 22px;border:1px solid var(--line);border-radius:11px;min-height:64px}.history-label{font-size:10px;color:#79816f;white-space:nowrap;display:flex;align-items:center;gap:9px}.history-label>span{font-size:18px}.history{display:flex;gap:6px;flex:1;flex-wrap:wrap}.history-empty{font-size:10px;color:#a1a799}.history-chip{background:#e9edde;padding:4px 8px;border-radius:4px;font-size:11px;min-width:26px;text-align:center}.history-chip:last-child{background:#d7e8b5;color:#43572e}.history-note{font-size:9px;color:#a0a797;white-space:nowrap}footer{display:flex;justify-content:space-between;padding:25px 0;font-size:9px;color:#9aa18f;letter-spacing:1px}footer>span:first-child{font-size:8px;letter-spacing:2px}dialog{width:min(480px,calc(100% - 32px));border:1px solid #dfe4d5;padding:30px;border-radius:18px;background:#fdfdf8;color:var(--ink);box-shadow:0 24px 100px #1e2a2030}dialog::backdrop{background:#1c251956;backdrop-filter:blur(5px)}.dialog-top{display:flex;align-items:center;justify-content:space-between}.close-button{border:0;background:#edf0e3;border-radius:50%;width:30px;height:30px;font-size:21px}dialog h2{font-size:22px;margin:17px 0}dialog p,dialog li{font-size:12px;line-height:1.9;color:#79826e}dialog ul{padding-left:20px}dialog li{margin:9px 0}dialog strong{font-weight:500;color:#526345}dialog .dialog-note{font-size:10px;background:#eef1e4;padding:13px;border-radius:8px}dialog .primary-button{width:100%;margin-top:20px}#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#293626;color:#f3f6e9;padding:13px 22px;border-radius:12px;font-size:12px;box-shadow:0 5px 20px #263a2522;opacity:0;pointer-events:none;transition:.3s;z-index:10;max-width:calc(100% - 28px);text-align:center}#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:1400px){.app-shell{max-width:1340px;padding:0 80px}.header{height:115px}.intro{margin:43px 0 32px}.scene{height:400px}.control-panel{padding:28px}.workspace{grid-template-columns:minmax(0,1fr) 338px;gap:26px}.face-button{padding-top:15px;padding-bottom:13px}.tip{padding-top:24px}}
+@media(max-width:900px){.app-shell{padding:0 26px}.workspace{grid-template-columns:minmax(0,1fr) 280px;gap:14px}.control-panel{padding:19px}.stats{gap:22px}.scene{height:350px}.orbit{scale:.87}.play-top{padding-left:17px;padding-right:17px}.header-note{display:none}.help-button{margin-left:auto}.history-note{display:none}}
+@media(max-width:660px){.app-shell{padding:0 18px}.header{height:78px}.brand{font-size:17px}.intro{margin:26px 0 23px}.eyebrow{font-size:8px;letter-spacing:1.5px}h1{font-size:24px}.intro-copy{font-size:10px}.cube-label{padding:9px 11px;gap:7px}.cube-label strong{font-size:9px}.cube-label small{font-size:8px}.label-grid{font-size:24px}.workspace{grid-template-columns:1fr;gap:16px}.scene{height:310px}.orbit{scale:.84}.ground-shadow{bottom:32px;width:220px}.stats{padding:16px 0 19px;gap:40px;margin:0 20px}.drag-hint{margin-bottom:18px}.play-top{padding-top:17px}.control-panel{padding:22px}.panel-copy{margin-bottom:16px}.face-grid{grid-template-columns:repeat(6,1fr);gap:6px;margin-top:15px}.face-button{padding:10px 0}.face-button strong{font-size:20px}.direction button{font-size:11px}.keyboard-hint{margin:13px 0 18px}.tip{padding-top:17px}.history-panel{padding:14px;gap:12px}.history-label{font-size:9px}.history-empty{font-size:9px}.history-chip{padding:3px 5px;font-size:10px}footer{gap:10px;font-size:8px;letter-spacing:0}footer>span:first-child{font-size:7px;letter-spacing:1px}}
+@media(prefers-reduced-motion:reduce){button,#toast{transition:none}}
+.sticker{cursor:grab;touch-action:none}.scene.turning,.scene.turning .sticker{cursor:grabbing}.selected-layer .sticker{box-shadow:inset 0 0 0 2px #ffffff75,inset 0 -2px 1px #00000019}
+.solution-panel{margin-top:18px;border:1px solid #dce4cd;border-radius:14px;background:#fbfcf5;padding:24px}.solution-panel[hidden]{display:none}.solution-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}.solution-heading .eyebrow{margin-bottom:8px}.solution-heading h2{font-size:17px;font-weight:600;margin:0}.solution-count{font-size:11px;color:#667c49;background:#e7efd9;padding:7px 12px;border-radius:20px;white-space:nowrap}.solution-next-row{display:flex;justify-content:space-between;gap:20px;align-items:center;margin:18px 0}.solution-next-row p{font-size:12px;line-height:1.8;margin:0;color:#546943}.solution-next-row button{flex-shrink:0;min-width:165px;padding:11px 16px}.solution-list{list-style:none;display:flex;gap:8px;flex-wrap:wrap;padding:0;margin:0 0 18px}.solution-chip{display:flex;gap:8px;align-items:center;padding:8px 11px;border:1px solid #e0e6d4;border-radius:7px;background:#f3f5ec}.solution-chip[aria-current=step]{background:#d6ee92;border-color:#bdd77f}.solution-number{font-size:9px;color:#87947a}.solution-chip strong{font-size:15px;font-weight:500;min-width:14px}.solution-legend{font-size:10px;line-height:1.9;color:#7c8970;margin:0}.solution-note{font-size:10px;line-height:1.9;color:#929c85;margin:9px 0 0}.solution-toggle{background:#edf3df;border:1px solid #dce7ca;border-radius:8px;font-size:10px;color:#677d4c;padding:10px}.solution-toggle:hover{background:#e4edcf}@media(max-width:660px){.solution-panel{padding:19px}.solution-next-row{align-items:stretch;flex-direction:column;gap:12px}.solution-next-row button{width:100%}.solution-heading h2{font-size:15px}.solution-chip{padding:7px 9px;gap:6px}}
+.beginner-toggle{margin-top:9px}.beginner-panel{margin-top:18px;border:1px solid #dce4cd;border-radius:14px;background:#fbfcf5;padding:24px}.beginner-panel[hidden]{display:none}.beginner-intro{font-size:12px;line-height:1.9;color:#7a876e;margin:15px 0 18px}.beginner-stages{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:23px}.beginner-stages button{border:1px solid #dfe6d5;border-radius:7px;background:#f4f6ef;padding:9px 11px;font-size:10px;color:#7e8b73}.beginner-stages button[aria-pressed=true]{background:#d6ee92;color:#415331;border-color:#c5dc92}.beginner-lesson{display:grid;grid-template-columns:105px 1fr;gap:24px;align-items:start;padding:20px;border-radius:12px;background:#eef2e5}.beginner-diagram{padding-top:4px;text-align:center}.goal-face{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:5px;background:#3c4635;border-radius:8px;width:94px;height:94px}.goal-face span{border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#8b7944}.beginner-diagram small{display:block;font-size:9px;color:#929d86;margin-top:9px}.beginner-explanation h3,.beginner-plan-heading h3{font-size:15px;font-weight:600;margin:0 0 10px}.beginner-explanation p{font-size:11px;line-height:1.95;margin:9px 0;color:#7d8a70}.beginner-explanation .beginner-goal{color:#4f643e;font-weight:500}.beginner-formulas{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}.beginner-formulas code{padding:8px 11px;background:#fcfdf8;border:1px solid #dce6cd;border-radius:6px;font-size:12px;letter-spacing:.8px;line-height:1.7;color:#536c3d}.beginner-explanation .beginner-hint{font-size:10px;color:#8b976e}.beginner-plan{margin-top:22px;border-top:1px solid #e1e7d6;padding-top:22px}.beginner-plan-heading{display:flex;align-items:center;justify-content:space-between;gap:15px}.beginner-plan-heading h3{margin:0}.beginner-plan-heading button{font-size:11px;background:#f0f5e6;padding:10px 14px}#beginner-progress{font-size:11px;color:#899779;line-height:1.8}.beginner-sources{font-size:9px;color:#99a18f;line-height:1.9;margin:18px 0 0}.beginner-sources a{color:#7d8e6c;text-underline-offset:3px}@media(max-width:660px){.beginner-panel{padding:19px}.beginner-lesson{grid-template-columns:1fr;gap:16px;padding:16px}.beginner-diagram{display:flex;align-items:center;gap:14px;text-align:left}.beginner-diagram small{margin:0}.goal-face{width:78px;height:78px}.beginner-plan-heading{align-items:flex-start;flex-direction:column}.beginner-stages button{padding:8px;font-size:9px}.beginner-formulas code{font-size:11px;letter-spacing:.3px}.beginner-panel>.solution-heading{align-items:flex-start}.beginner-panel>.solution-heading .solution-count{font-size:9px;padding:6px 9px}}
+/* The cube and the next-step controls stay in the viewport; only details scroll. */
+html,body{height:100%;overflow:hidden}.app-shell{max-width:1480px;height:100dvh;padding:0 24px;display:flex;flex-direction:column}.header{height:60px;flex:0 0 60px}.brand{font-size:17px}.brand-mark{scale:.9;margin-right:2px}.header-note{font-size:10px}main{display:flex;flex-direction:column;flex:1;min-height:0}.intro{flex:0 0 auto;margin:15px 0 16px;min-height:55px}h1{font-size:22px}.intro .eyebrow,.intro-copy{display:none}.cube-label{padding:7px 12px}.cube-label .label-grid{font-size:23px}.workspace{grid-template-columns:minmax(0,1fr) minmax(340px,460px);gap:18px;flex:1;min-height:0;padding-bottom:18px}.play-panel{display:flex;flex-direction:column;height:100%;min-height:0;align-self:stretch}.play-top{padding:14px 18px 0;flex:0 0 auto}.scene{flex:1;min-height:0;height:auto}.orbit{scale:1}.ground-shadow{bottom:6%;width:44%;max-width:280px}.drag-hint{font-size:9px;margin:0 8px 15px;flex:0 0 auto}.stats{margin:0 18px;padding:14px 0 17px;gap:35px;flex:0 0 auto}.stats strong{font-size:22px}.control-column{display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden;gap:12px}.control-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#ced8be transparent;scroll-padding:12px;padding-right:5px;position:relative}.control-scroll:focus-visible{outline:2px solid #91ac6d;outline-offset:-2px}.control-panel{padding:18px;border-radius:13px}.panel-copy{margin:7px 0 12px}.direction button{padding:7px 1px}.face-grid{grid-template-columns:repeat(6,minmax(0,1fr));margin-top:12px;gap:6px}.face-button{padding:8px 0 7px;gap:2px}.face-button strong{font-size:20px}.face-dot{width:6px;height:6px;margin-bottom:2px}.keyboard-hint{margin:10px 0 13px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.actions #shuffle{grid-column:1/-1;padding:11px 8px;min-height:42px}.reset-button,.solution-toggle{min-height:36px;padding:8px 10px}.beginner-toggle{margin-top:7px;min-height:38px}.tip{display:none}.history-panel{padding:11px 14px;min-height:45px;margin-top:12px;gap:12px}.history-note{display:none}.history{gap:4px}.history-chip{font-size:10px;padding:3px 6px}.solution-panel,.beginner-panel{padding:17px;margin-top:12px;border-radius:13px}.solution-heading h2{font-size:15px}.solution-heading .eyebrow{font-size:8px;letter-spacing:1px}.solution-count{font-size:9px;padding:6px 9px}.solution-next-row{margin:14px 0;gap:10px}.solution-next-row p{font-size:11px}.solution-list{gap:5px}.solution-chip{padding:6px 8px;gap:5px}.solution-chip strong{font-size:13px}.beginner-intro{font-size:11px;margin:13px 0 10px}.beginner-stages{margin:16px 0;gap:5px}.beginner-stages button{font-size:9px;padding:7px 8px}.beginner-lesson{grid-template-columns:70px minmax(0,1fr);padding:13px;gap:13px}.goal-face{width:66px;height:66px;padding:4px;gap:2px}.beginner-diagram small{font-size:8px}.beginner-explanation h3{font-size:13px}.beginner-explanation p{font-size:10px;line-height:1.9}.beginner-formulas{margin:10px 0}.beginner-formulas code{font-size:11px;letter-spacing:.2px;padding:7px 8px;overflow-wrap:anywhere}.beginner-plan{margin-top:17px;padding-top:17px}.beginner-plan-heading h3{font-size:13px}.guide-dock{flex:0 0 auto;border:1px solid #cdddb6;border-radius:13px;background:#eaf2dd;padding:14px 16px;box-shadow:0 3px 12px #46642408}.guide-dock[hidden],.dock-actions button[hidden]{display:none}.dock-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.dock-heading p{font-size:10px;line-height:1.7;color:#7c8b69;margin:0;flex:1}.dock-heading .close-button{width:23px;height:23px;flex:0 0 23px;font-size:18px;background:#dfe9d0}#dock-next{font-size:12px;line-height:1.8;color:#40562f;font-weight:500;margin:7px 0 11px}.dock-actions{display:flex;gap:8px}.dock-actions .primary-button{flex:1;min-height:43px;font-size:11px;padding:10px 8px}.dock-actions .reset-button{flex:1;font-size:10px;background:#f8fbf1;padding:8px}.beginner-sources{overflow-wrap:anywhere}#toast{bottom:15px}dialog{max-height:calc(100dvh - 24px);overflow:auto}
+@media(max-height:650px){.intro{display:none}.workspace{padding-top:12px}.play-top{padding-top:10px}.stats{padding:9px 0 11px}.stats strong{font-size:18px}.drag-hint{margin-bottom:10px}}
+@media(max-width:1000px) and (min-width:761px){.app-shell{padding:0 16px}.workspace{grid-template-columns:minmax(0,1fr) minmax(330px,42%);gap:12px}.stats{gap:22px}.drag-hint{font-size:8px}}
+@media(max-width:760px){.app-shell{padding:0 12px}.header{height:50px;flex-basis:50px;gap:12px}.brand{font-size:15px;gap:7px}.brand-mark{scale:.82;margin-right:0}.help-button{padding:7px 11px}.intro{display:none}.workspace{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(170px,46%) minmax(0,1fr);gap:10px;padding:10px 0 12px}.play-panel{border-radius:13px}.play-top{padding:7px 12px 0}.status-pill{font-size:9px;padding:5px 9px}.text-button{font-size:9px;padding:5px}.stats{margin:0 12px;padding:6px 0 7px;gap:23px}.stats>div{flex-direction:row;align-items:baseline;gap:6px}.stats span{font-size:9px}.stats strong{font-size:17px}.stats small{font-size:9px}.undo{font-size:9px;padding:4px 8px;gap:4px;min-height:27px}.undo span{font-size:16px}.drag-hint{font-size:8px;margin:0 7px 7px;letter-spacing:0}.drag-hint svg{height:12px;width:12px}.ground-shadow{height:20px;filter:blur(14px);bottom:10%}.control-column{gap:8px}.control-scroll{padding-right:3px}.control-panel{padding:14px}.guide-dock{padding:10px 12px;border-radius:11px}.dock-heading p{font-size:9px}.dock-heading .close-button{width:21px;height:21px;flex-basis:21px}#dock-next{font-size:11px;margin:4px 0 8px;line-height:1.65}.dock-actions{gap:6px}.dock-actions .primary-button{min-height:38px;font-size:10px;padding:8px 6px}.dock-actions .reset-button{font-size:9px;min-height:38px;padding:6px}.beginner-lesson{grid-template-columns:65px minmax(0,1fr);gap:11px}.beginner-diagram{display:block;text-align:center}.beginner-diagram small{margin-top:7px}.beginner-panel>.solution-heading{gap:10px}.beginner-panel>.solution-heading .solution-count{font-size:8px;padding:5px 7px}.history-panel{padding:9px 12px}.solution-panel,.beginner-panel{padding:14px}.goal-face{width:62px;height:62px}.beginner-explanation h3{font-size:12px}.beginner-explanation p{font-size:10px}}
+@media(max-width:760px) and (max-height:500px) and (orientation:landscape){.header{height:42px;flex-basis:42px}.workspace{grid-template-columns:minmax(0,1fr) minmax(290px,48%);grid-template-rows:minmax(0,1fr);padding-top:8px;padding-bottom:8px}.drag-hint{display:none}.guide-dock{padding:8px 10px}.control-panel{padding:12px}.face-button strong{font-size:17px}.face-button{padding:6px 0}.keyboard-hint{display:none}}
+
+</style>
+  <script defer>
+/* A discrete cube model shared by the renderer and the verification script. */
+(function (root) {
+  'use strict';
+  const faces = {
+    U: { axis: 1, layer: -1, sign: -1, normal: [0,-1,0], color: '#ecc44d' },
+    D: { axis: 1, layer: 1, sign: 1, normal: [0,1,0], color: '#f7f4e8' },
+    F: { axis: 2, layer: 1, sign: 1, normal: [0,0,1], color: '#5bad88' },
+    B: { axis: 2, layer: -1, sign: -1, normal: [0,0,-1], color: '#5b96ce' },
+    R: { axis: 0, layer: 1, sign: 1, normal: [1,0,0], color: '#e57061' },
+    L: { axis: 0, layer: -1, sign: -1, normal: [-1,0,0], color: '#efa064' }
+  };
+  const moves = {
+    ...faces,
+    M: { axis: 0, layer: 0, sign: -1 },
+    E: { axis: 1, layer: 0, sign: 1 },
+    S: { axis: 2, layer: 0, sign: 1 }
+  };
+  function rotateBy(v, axis, radians) {
+    const result = [...v], a = (axis+1)%3, b = (axis+2)%3;
+    const cos = Math.cos(radians), sin = Math.sin(radians);
+    result[a] = v[a]*cos-v[b]*sin;
+    result[b] = v[a]*sin+v[b]*cos;
+    return result;
+  }
+  function projectPoint(point, view) {
+    const radians = Math.PI/180;
+    const p = rotateBy(rotateBy(point,1,view.y*radians),0,view.x*radians).map(n=>n*view.scale);
+    const factor = 1/(1-p[2]/view.perspective);
+    return [(p[0]+view.offsetX)*factor,(p[1]+view.offsetY)*factor];
+  }
+  // Compare the screen-space tangents of the two rows crossing the picked tile.
+  // This keeps a swipe following the finger even after the whole cube is orbited.
+  function pickDragMove(pos, side, dx, dy, view) {
+    const normal = faces[side].normal;
+    const point = pos.map((n,i)=>n*82+normal[i]*40);
+    let best = null;
+    for(let axis=0;axis<3;axis++) {
+      if(normal[axis]) continue;
+      const before = projectPoint(rotateBy(point,axis,-.01),view);
+      const after = projectPoint(rotateBy(point,axis,.01),view);
+      const tangent = after.map((n,i)=>n-before[i]);
+      const length = Math.hypot(...tangent);
+      if(length<.001) continue;
+      const unit = tangent.map(n=>n/length);
+      const alignment = dx*unit[0]+dy*unit[1];
+      if(!best || Math.abs(alignment)>best.score) {
+        const face = Object.keys(moves).find(name=>moves[name].axis===axis && moves[name].layer===pos[axis]);
+        best = { face, unit, score: Math.abs(alignment) };
+      }
+    }
+    return best;
+  }
+  function rotate(v, axis, sign) {
+    const [x,y,z] = v;
+    if (axis === 0) return [x, -sign*z, sign*y];
+    if (axis === 1) return [sign*z, y, -sign*x];
+    return [-sign*y, sign*x, z];
+  }
+  // Keep a reduced path from the last completed cube to the current position.
+  // Its inverse is always a valid solution, including middle-slice moves.
+  function recordMove(path, face, inverse=false) {
+    if(!Object.hasOwn(moves,face)) throw new Error('Unknown cube face');
+    const result = [...path], last = result[result.length-1];
+    const turns = ((last?.face===face ? result.pop().turns : 0)+(inverse?3:1))%4;
+    if(turns) result.push({face,turns});
+    return result;
+  }
+  function solutionFor(path) {
+    const result = [];
+    for(let i=path.length-1;i>=0;i--) {
+      const {face,turns} = path[i];
+      if(turns===1) result.push({face,inverse:true});
+      else if(turns===3) result.push({face,inverse:false});
+      else if(turns===2) result.push({face,inverse:false},{face,inverse:false});
+    }
+    return result;
+  }
+  class CubeModel {
+    constructor() { this.reset(); }
+    reset() {
+      this.cubies = [];
+      for (let x=-1;x<=1;x++) for(let y=-1;y<=1;y++) for(let z=-1;z<=1;z++) {
+        if (!x && !y && !z) continue;
+        const pos = [x,y,z];
+        const stickers = Object.entries(faces).filter(([,f]) => pos[f.axis] === f.layer)
+          .map(([face,f]) => ({ face, normal: [...f.normal] }));
+        this.cubies.push({ id: `${x},${y},${z}`, pos, stickers });
+      }
+    }
+    turn(face, inverse=false) {
+      if (!Object.hasOwn(moves,face)) throw new Error('Unknown cube face');
+      const f = moves[face], sign = f.sign * (inverse ? -1 : 1);
+      for (const c of this.cubies) if(c.pos[f.axis] === f.layer) {
+        c.pos = rotate(c.pos,f.axis,sign);
+        c.stickers.forEach(s => { s.normal = rotate(s.normal,f.axis,sign); });
+      }
+    }
+    isSolved() {
+      return Object.values(faces).every(f => {
+        const colors = this.cubies.flatMap(c => c.stickers.filter(s => s.normal.every((n,i) => n === f.normal[i])).map(s => s.face));
+        return colors.length === 9 && colors.every(c => c === colors[0]);
+      });
+    }
+    snapshot() { return JSON.stringify(this.cubies.map(c => ({id:c.id,pos:c.pos.map(n=>n||0),stickers:c.stickers.map(s=>({face:s.face,normal:s.normal.map(n=>n||0)}))}))); }
+  }
+  const api = { CubeModel, faces, moves, rotate, projectPoint, pickDragMove, recordMove, solutionFor };
+  if(typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.CubeEngine = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+  <script>
+/* A layer-by-layer planner based on cubie positions, never on scramble history. */
+(function(root){
+  'use strict';
+  const engine=typeof module!=='undefined' && module.exports?require('./cube.js'):root.CubeEngine;
+  const {CubeModel,faces,moves,rotate}=engine;
+  const solved=new CubeModel();
+  const clone=model=>{const copy=new CubeModel();copy.cubies=model.cubies.map(c=>({id:c.id,pos:[...c.pos],stickers:c.stickers.map(s=>({face:s.face,normal:[...s.normal]}))}));return copy;};
+  const same=(a,b)=>a.every((n,i)=>n===b[i]);
+  const parse=text=>text.trim().split(/\s+/).filter(Boolean).flatMap(token=>{
+    if(!/^[UDFBRLMES](?:2|'|′)?$/.test(token))throw new Error('Invalid algorithm');
+    const step={face:token[0],inverse:/['′]/.test(token)};
+    return token.endsWith('2')?[{...step},{...step}]:[step];
+  });
+  const inverse=steps=>steps.slice().reverse().map(s=>({face:s.face,inverse:!s.inverse}));
+  const yaw=(steps,n)=>steps.map(s=>({face:'FRBL'.includes(s.face)?'FRBL'[('FRBL'.indexOf(s.face)+n)%4]:s.face,inverse:s.inverse}));
+  const variants=(text,includeInverse=false)=>{
+    const base=parse(text), result=[];
+    for(let i=0;i<4;i++){const steps=yaw(base,i);result.push(steps);if(includeInverse)result.push(inverse(steps));}
+    return result;
+  };
+  const up=['U',"U'",'U2'].map(parse);
+  const algorithms={
+    cross:Object.keys(faces).flatMap(face=>[face,face+"'",face+'2'].map(parse)),
+    corners:[...up,...variants("R U R' U'",true)],
+    middle:[...up,...variants("U R U' R' U' F' U F"),...variants("U' L' U L U F U' F'")],
+    yellowCross:[...up,...variants("F R U R' U' F'")],
+    yellowEdges:[...up,...variants("R U R' U R U2 R' U")],
+    yellowCorners:variants("U R U' L' U R' U' L",true)
+  };
+  const guides=[
+    {id:'cross',title:'白のクロス',goal:'白い十字と、エッジの側面の色を中心に合わせる。',
+      text:'白を含む2色のエッジを4個、白の中心のまわりへ集めます。白い十字だけでなく、側面の色と中心も一致していれば完成です。',
+      hint:'白のエッジが上にあり、側面の色が中心と合っているときは、その側面を180°回して下へ移せます。',formulas:[],diagram:'whiteCross'},
+    {id:'corners',title:'白の面・1段目',goal:'白の4つの角を入れ、側面の下段までそろえる。',
+      text:'角の3色から入れる場所を決めます。その真上に角を移し、入れる場所を手前右にして、右手の4手を必要な回数くり返します。下段に間違って入った角は、同じ動きで一度上へ出します。',
+      hint:'手順は R U R′ U′。白い面に加えて、側面の下段の色も中心に合わせます。',formulas:["R U R' U'"],diagram:'whiteFace'},
+    {id:'middle',title:'中段のエッジ',goal:'白い1段目を保ちながら、側面の2段目をそろえる。',
+      text:'上段から黄色を含まないエッジを探し、側面の色を前の中心に合わせます。行き先が右なら右入れ、左なら左入れ。中段に間違った向きで入っている場合は、いったん上段へ出して入れ直します。',
+      hint:'白を下、黄色を上にしたまま進めます。',formulas:["U R U' R' U' F' U F","U' L' U L U F U' F'"],diagram:'middle'},
+    {id:'yellowCross',title:'黄色のクロス',goal:'上面の4つのエッジを黄色の十字にする。',
+      text:'上面の黄色が点・L字・横線のどれかを確認し、6手をくり返して十字にします。ここでは、側面の色の並びはまだ気にしなくて大丈夫です。',
+      hint:'横線は左右に伸びる向きに。L字は上面の奥と左に黄色のエッジがある向きにして回します。',formulas:["F R U R' U' F'"],diagram:'yellowCross'},
+    {id:'yellowEdges',title:'黄色のエッジの位置',goal:'黄色の十字を保ち、側面のエッジも中心に合わせる。',
+      text:'上段のエッジの位置を入れ替えます。上面の向きを調整し、この手順とその向きを変えた手順で、4つの側面の色を中心に合わせます。',
+      hint:'この手順は前と左の上段エッジを入れ替えます。必要なら向きを変えてもう一度。',formulas:["R U R' U R U2 R' U"],diagram:'yellowCross'},
+    {id:'yellowCorners',title:'黄色の角の位置',goal:'角の3色が、隣り合う3つの中心と一致する位置へ。',
+      text:'黄色の角を正しい場所へ移します。黄色が上を向いているかは、この段階では問いません。正しい場所にある角を手前右上にして、残る3つを循環させます。',
+      hint:'正しい位置の角がない場合は、一度回してから確認します。',formulas:["U R U' L' U R' U' L"],diagram:'corners'},
+    {id:'orient',title:'黄色の角の向き・完成',goal:'角の黄色を上に向けて、6面を完成させる。',
+      text:'向きが違う角を手前右上に置き、4手を2回または4回くり返します。次の角は上面だけを回して手前右上へ。全体の持ち方を変えず、最後に上面を合わせます。',
+      hint:'途中で下段が崩れて見えても、4手を最後まで回してください。全部の角が終わると下段も戻ります。',formulas:["R' D' R D"],diagram:'yellowFace'}
+  ];
+  const groups={
+    whiteEdges:solved.cubies.filter(c=>c.stickers.length===2 && c.stickers.some(s=>s.face==='D')),
+    whiteCorners:solved.cubies.filter(c=>c.stickers.length===3 && c.stickers.some(s=>s.face==='D')),
+    middle:solved.cubies.filter(c=>c.stickers.length===2 && c.pos[1]===0),
+    yellowEdges:solved.cubies.filter(c=>c.stickers.length===2 && c.stickers.some(s=>s.face==='U')),
+    yellowCorners:solved.cubies.filter(c=>c.stickers.length===3 && c.stickers.some(s=>s.face==='U'))
+  };
+  const slots={2:solved.cubies.filter(c=>c.stickers.length===2).map(c=>c.pos),3:solved.cubies.filter(c=>c.stickers.length===3).map(c=>c.pos)};
+  function stateOf(pos,normal,size){
+    const slot=slots[size].findIndex(p=>same(p,pos));
+    const axes=pos.flatMap((n,i)=>n?[i]:[]);
+    const orientation=axes.findIndex(axis=>normal[axis]!==0);
+    if(slot<0 || orientation<0)throw new Error('Invalid cubie');
+    return slot*size+orientation;
+  }
+  function unpack(state,size){
+    const pos=slots[size][Math.floor(state/size)], axes=pos.flatMap((n,i)=>n?[i]:[]), normal=[0,0,0];
+    normal[axes[state%size]]=pos[axes[state%size]];
+    return {pos:[...pos],normal};
+  }
+  const powers=[1,24,576,13824];
+  function keyOf(model,pieces){
+    return pieces.reduce((key,piece,i)=>{
+      const c=model.cubies.find(c=>c.id===piece.id), s=c.stickers.find(s=>s.face===piece.stickers[0].face);
+      return key+stateOf(c.pos,s.normal,c.stickers.length)*powers[i];
+    },0);
+  }
+  function transforms(macros,size){
+    return macros.map(macro=>Uint8Array.from({length:24},(_,code)=>{
+      let {pos,normal}=unpack(code,size);
+      for(const step of macro){const f=moves[step.face];if(pos[f.axis]===f.layer){const sign=f.sign*(step.inverse?-1:1);pos=rotate(pos,f.axis,sign);normal=rotate(normal,f.axis,sign);}}
+      return stateOf(pos,normal,size);
+    }));
+  }
+  function transformKey(key,table){
+    let next=0;
+    for(let i=0;i<4;i++){next+=table[key%24]*powers[i];key=Math.floor(key/24);}
+    return next;
+  }
+  function exactGoal(key,pieces,positionOnly=false){
+    for(const piece of pieces){const expected=stateOf(piece.pos,piece.stickers[0].normal,piece.stickers.length), actual=key%24;key=Math.floor(key/24);
+      if(positionOnly?Math.floor(actual/piece.stickers.length)!==Math.floor(expected/piece.stickers.length):actual!==expected)return false;
+    }
+    return true;
+  }
+  function yellowGoal(key){
+    for(let i=0;i<4;i++){const {normal}=unpack(key%24,2);if(!same(normal,faces.U.normal))return false;key=Math.floor(key/24);}return true;
+  }
+  const cache=new Map();
+  async function search(model,pieces,macros,goal,yieldFn){
+    const start=keyOf(model,pieces);if(goal(start))return [];
+    const cacheKey=macros;
+    if(!cache.has(cacheKey))cache.set(cacheKey,transforms(macros,pieces[0].stickers.length));
+    const tables=cache.get(cacheKey), capacity=24**4;
+    const parents=new Int32Array(capacity).fill(-1), via=new Uint8Array(capacity), queue=new Uint32Array(capacity);
+    let head=0,tail=1,found=-1;queue[0]=start;parents[start]=start;
+    while(head<tail && found<0){
+      const current=queue[head++];
+      for(let a=0;a<tables.length;a++){
+        const next=transformKey(current,tables[a]);if(parents[next]!==-1)continue;
+        parents[next]=current;via[next]=a;queue[tail++]=next;
+        if(goal(next)){found=next;break;}
+      }
+      if(head%3000===0)await yieldFn();
+    }
+    if(found<0)throw new Error('この段階の手順を見つけられませんでした。');
+    const route=[];while(found!==start){route.push(via[found]);found=parents[found];}
+    return route.reverse().flatMap(a=>macros[a].map(s=>({...s})));
+  }
+  function centersKey(model){return Object.keys(faces).map(face=>model.cubies.find(c=>c.stickers.length===1 && c.stickers[0].face===face).pos.join(',')).join(';');}
+  const targetCenters=centersKey(solved);
+  const wholeTurns=[parse("R M' L'"),parse("D E U'"),parse("F S B'")];
+  function normalize(model){
+    if(centersKey(model)===targetCenters)return [];
+    const queue=[{cube:clone(model),steps:[]}],seen=new Set([centersKey(model)]);
+    for(let head=0;head<queue.length;head++)for(const macro of wholeTurns){
+      const cube=clone(queue[head].cube);macro.forEach(s=>cube.turn(s.face,s.inverse));
+      const key=centersKey(cube),steps=[...queue[head].steps,...macro];
+      if(key===targetCenters)return steps;
+      if(!seen.has(key)){seen.add(key);queue.push({cube,steps});}
+    }
+    throw new Error('中心の配置を確認できませんでした。');
+  }
+  function pieceSolved(model,piece,positionOnly=false){
+    const c=model.cubies.find(c=>c.id===piece.id);
+    return same(c.pos,piece.pos) && (positionOnly || piece.stickers.every(s=>same(s.normal,c.stickers.find(t=>t.face===s.face).normal)));
+  }
+  function checkpoints(model){
+    const check=pieces=>pieces.every(p=>pieceSolved(model,p));
+    return [check(groups.whiteEdges),check(groups.whiteEdges)&&check(groups.whiteCorners),check(groups.whiteEdges)&&check(groups.whiteCorners)&&check(groups.middle),
+      check(groups.whiteEdges)&&check(groups.whiteCorners)&&check(groups.middle)&&groups.yellowEdges.every(p=>{const c=model.cubies.find(c=>c.id===p.id);return same(c.stickers.find(s=>s.face==='U').normal,faces.U.normal);}),
+      check(groups.whiteEdges)&&check(groups.whiteCorners)&&check(groups.middle)&&check(groups.yellowEdges),
+      check(groups.whiteEdges)&&check(groups.whiteCorners)&&check(groups.middle)&&check(groups.yellowEdges)&&groups.yellowCorners.every(p=>pieceSolved(model,p,true)),model.isSolved()];
+  }
+  async function plan(input,{onProgress=()=>{},yieldFn=()=>new Promise(r=>setTimeout(r,0))}={}){
+    const model=clone(input),result=[];
+    if(model.isSolved())return {stages:[],steps:[]};
+    function add(id,title,steps){
+      for(const s of steps)model.turn(s.face,s.inverse);
+      result.push({id,title,steps:steps.map(s=>({...s,stage:id}))});
+    }
+    const orientation=normalize(model);if(orientation.length)add('prepare','準備：白を下、黄色を上へ',orientation);
+    const configs=[
+      [groups.whiteEdges,algorithms.cross,key=>exactGoal(key,groups.whiteEdges)],
+      [groups.whiteCorners,algorithms.corners,key=>exactGoal(key,groups.whiteCorners)],
+      [groups.middle,algorithms.middle,key=>exactGoal(key,groups.middle)],
+      [groups.yellowEdges,algorithms.yellowCross,yellowGoal],
+      [groups.yellowEdges,algorithms.yellowEdges,key=>exactGoal(key,groups.yellowEdges)],
+      [groups.yellowCorners,algorithms.yellowCorners,key=>exactGoal(key,groups.yellowCorners,true)]
+    ];
+    for(let i=0;i<configs.length;i++){
+      onProgress(guides[i].title);await yieldFn();
+      const [pieces,macros,goal]=configs[i];const steps=await search(model,pieces,macros,goal,yieldFn);
+      add(guides[i].id,guides[i].title,steps);
+      if(!checkpoints(model).slice(0,i+1).every(Boolean))throw new Error('段階の完成チェックに失敗しました。');
+    }
+    onProgress(guides[6].title);await yieldFn();
+    const final=[];
+    const apply=steps=>{steps.forEach(s=>model.turn(s.face,s.inverse));final.push(...steps);};
+    if(!model.isSolved())for(let corner=0;corner<4;corner++){
+      const oriented=()=>{const c=model.cubies.find(c=>same(c.pos,[1,-1,1]));return same(c.stickers.find(s=>s.face==='U').normal,faces.U.normal);};
+      let turns=0;
+      while(!oriented()){
+        if(turns++>=2)throw new Error('角の向きを確認できませんでした。');
+        apply(parse("R' D' R D R' D' R D"));
+      }
+      apply(parse('U'));
+    }
+    result.push({id:'orient',title:guides[6].title,steps:final.map(s=>({...s,stage:'orient'}))});
+    if(!model.isSolved())throw new Error('完成チェックに失敗しました。');
+    return {stages:result,steps:result.flatMap(s=>s.steps)};
+  }
+  const api={plan,guides,parse,checkpoints,algorithms,clone};
+  if(typeof module!=='undefined' && module.exports)module.exports=api;else root.CubeBeginner=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+</script>
+  <script>window.addEventListener('DOMContentLoaded', () => {
+'use strict';
+const {CubeModel,faces,moves,pickDragMove,recordMove,solutionFor} = CubeEngine;
+const model = new CubeModel();
+const $ = id => document.getElementById(id);
+const cubeEl = $('cube'), orbit = $('orbit'), scene = $('scene');
+const elements = new Map();
+let inverse = false, busy = false, history = [], moveCount = 0;
+let running = false, elapsed = 0, startedAt = 0, challenge = false;
+let viewX = -24, viewY = -34, toastTimeout;
+let solutionPath = [], solutionVisible = false;
+let beginnerVisible=false, beginnerSteps=null, beginnerIndex=0, beginnerStage='cross', beginnerCalculating=false, beginnerProgress='';
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+for (const c of model.cubies) {
+  const el = document.createElement('div'); el.className = 'cubie';
+  el.dataset.cubie = c.id;
+  for (const face of Object.keys(faces)) {
+    const side = document.createElement('div'); side.className = 'cubie-face'; side.dataset.side = face; el.append(side);
+  }
+  cubeEl.append(el); elements.set(c.id,el);
+}
+function renderCube() {
+  for(const c of model.cubies) {
+    const el = elements.get(c.id);
+    el.style.transform = `translate3d(${c.pos[0]*82}px,${c.pos[1]*82}px,${c.pos[2]*82}px)`;
+    for(const side of el.children) {
+      side.replaceChildren();
+      const normal = faces[side.dataset.side].normal;
+      const s = c.stickers.find(s => s.normal.every((n,i) => n === normal[i]));
+      if(s) {
+        const sticker = document.createElement('div'); sticker.className = 'sticker' + (c.stickers.length===1 ? ' center' : '');
+        sticker.style.backgroundColor = faces[s.face].color; side.append(sticker);
+      }
+    }
+  }
+}
+function renderStats() {
+  $('moves').innerHTML = `${moveCount}<small> moves</small>`;
+  $('undo').disabled = busy || !history.length;
+  document.querySelectorAll('[data-face],#shuffle,#reset,#clockwise,#counterclockwise').forEach(b => { b.disabled=busy; });
+  const solved = model.isSolved();
+  $('status').classList.toggle('playing',!solved);
+  $('status').innerHTML = `<i></i> ${busy ? '回転中…' : solved ? (challenge ? 'クリア！' : 'そろっています') : challenge ? 'チャレンジ中' : '自由に練習中'}`;
+  $('history').replaceChildren();
+  if(!history.length) {
+    const empty=document.createElement('span');empty.className='history-empty';empty.textContent=challenge?'準備OK。最初の一手でタイマースタート。':'最初の一手を回してみよう。';$('history').append(empty);
+  } else for(const h of history.slice(-12)) {
+    const chip=document.createElement('span');chip.className='history-chip';chip.textContent=h.face+(h.inverse?'′':'');$('history').append(chip);
+  }
+  renderSolution();
+  renderBeginner();
+  renderDock();
+}
+function renderDock() {
+  $('guide-dock').hidden=!solutionVisible && !beginnerVisible;
+  $('solution-step').hidden=!solutionVisible;
+  $('beginner-step').hidden=!beginnerVisible;
+  $('beginner-calculate').hidden=!beginnerVisible;
+  if(beginnerVisible) {
+    $('dock-title').textContent=$('beginner-progress').textContent;
+    $('dock-next').textContent=$('beginner-next').textContent;
+  } else if(solutionVisible) {
+    $('dock-title').textContent=`正解手順 · ${$('solution-count').textContent}`;
+    $('dock-next').textContent=$('solution-next').textContent;
+  }
+}
+function showDetails(panel) {
+  const scroller=$('control-scroll');
+  scroller.scrollTo({top:panel.getBoundingClientRect().top-scroller.getBoundingClientRect().top+scroller.scrollTop,behavior:reducedMotion?'auto':'smooth'});
+}
+const faceNames={U:'上面',D:'下面',F:'前面',B:'背面',R:'右面',L:'左面'};
+const middleNames={M:'中央の縦列（左面から見た向き）',E:'中央の横列（下面から見た向き）',S:'前後の中央の層（前面から見た向き）'};
+function moveDescription(step) {
+  return `${faceNames[step.face]||middleNames[step.face]}を${step.inverse?'反時計回り':'時計回り'}に90°`;
+}
+function renderSolution() {
+  const sequence=model.isSolved()?[]:solutionFor(solutionPath);
+  $('solution-toggle').disabled=busy;
+  $('solution-toggle').setAttribute('aria-expanded',String(solutionVisible));
+  $('solution-toggle').textContent=solutionVisible?'正解手順を閉じる':'正解手順を見る';
+  $('solution-panel').hidden=!solutionVisible;
+  $('solution-step').disabled=busy || !sequence.length;
+  if(!solutionVisible)return;
+  $('solution-count').textContent=sequence.length?`残り${sequence.length}手`:'完成';
+  $('solution-next').textContent=busy?'回転が終わると手順が更新されます。':sequence.length?`次は ${sequence[0].face}${sequence[0].inverse?'′':''}：${moveDescription(sequence[0])}`:'6つの面がそろっています。';
+  $('solution-list').replaceChildren();
+  sequence.forEach((step,i)=>{
+    const item=document.createElement('li');item.className='solution-chip';
+    if(i===0)item.setAttribute('aria-current','step');
+    const number=document.createElement('span');number.className='solution-number';number.textContent=String(i+1);
+    const label=document.createElement('strong');label.textContent=step.face+(step.inverse?'′':'');
+    item.title=moveDescription(step);item.setAttribute('aria-label',`${i+1}手目：${moveDescription(step)}`);
+    item.append(number,label);$('solution-list').append(item);
+  });
+}
+function renderTime() {
+  const time = elapsed + (running ? performance.now()-startedAt : 0);
+  const minutes=Math.floor(time/60000), seconds=Math.floor(time/1000)%60, tenth=Math.floor(time/100)%10;
+  $('time').innerHTML=`${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}<small>.${tenth}</small>`;
+}
+function invalidateBeginner(message='') {
+  beginnerSteps=null;beginnerIndex=0;beginnerProgress=message;
+}
+function trackBeginnerMove(face,reverse) {
+  if(!beginnerSteps)return;
+  const next=beginnerSteps[beginnerIndex],previous=beginnerSteps[beginnerIndex-1];
+  if(next && next.face===face && next.inverse===reverse)beginnerIndex++;
+  else if(previous && previous.face===face && previous.inverse!==reverse)beginnerIndex--;
+  else {invalidateBeginner('キューブを動かしました。この状態から手順を作り直せます。');return;}
+  const current=beginnerSteps[beginnerIndex];
+  if(current && current.stage!=='prepare')beginnerStage=current.stage;
+}
+function renderBeginner() {
+  $('beginner-toggle').disabled=busy;
+  $('beginner-toggle').setAttribute('aria-expanded',String(beginnerVisible));
+  $('beginner-toggle').textContent=beginnerVisible?'初心者の解法を閉じる':'初心者向けの解法を学ぶ';
+  $('beginner-panel').hidden=!beginnerVisible;
+  $('beginner-calculate').disabled=busy;
+  $('beginner-step').disabled=busy || !beginnerSteps || beginnerIndex>=beginnerSteps.length || model.isSolved();
+  if(!beginnerVisible)return;
+  $('beginner-stages').replaceChildren();
+  CubeBeginner.guides.forEach((guide,i)=>{
+    const button=document.createElement('button');button.textContent=`${i+1}. ${guide.title}`;
+    button.setAttribute('aria-pressed',String(guide.id===beginnerStage));
+    button.onclick=()=>{beginnerStage=guide.id;renderBeginner();};$('beginner-stages').append(button);
+  });
+  const guide=CubeBeginner.guides.find(g=>g.id===beginnerStage);
+  $('beginner-stage-title').textContent=guide.title;$('beginner-goal').textContent=guide.goal;
+  $('beginner-text').textContent=guide.text;$('beginner-hint').textContent=guide.hint;
+  $('beginner-formulas').replaceChildren();
+  guide.formulas.forEach((formula,i)=>{const code=document.createElement('code');code.textContent=(guide.id==='middle'?(i===0?'右入れ：':'左入れ：'):'')+formula.replaceAll("'",'′');$('beginner-formulas').append(code);});
+  const color=guide.diagram.startsWith('white')?faces.D.color:guide.diagram==='middle'?faces.F.color:faces.U.color;
+  const cells=guide.diagram.endsWith('Cross')?[1,3,4,5,7]:guide.diagram==='middle'?[3,4,5,6,7,8]:guide.diagram==='corners'?[0,2,4,6,8]:[0,1,2,3,4,5,6,7,8];
+  $('beginner-goal-face').replaceChildren();
+  for(let i=0;i<9;i++){const cell=document.createElement('span');cell.style.background=cells.includes(i)?color:'#dfe4d5';if(guide.diagram==='corners' && [0,2,6,8].includes(i)){cell.textContent='角';cell.style.background='#d5deb7';}$('beginner-goal-face').append(cell);}
+  const diagramLabel=guide.diagram==='middle'?'側面の下2段':guide.diagram==='corners'?'角の位置（向きは不問）':guide.diagram.startsWith('white')?'下面の目標':'上面の目標';
+  $('beginner-goal-face').setAttribute('aria-label',`${diagramLabel}：${guide.goal}`);$('beginner-diagram-label').textContent=diagramLabel;
+  const next=beginnerSteps?.[beginnerIndex], remaining=(beginnerSteps?.length||0)-beginnerIndex;
+  $('beginner-progress').textContent=beginnerCalculating?beginnerProgress:model.isSolved()?'6つの面がそろっています。':next?`現在の段階：${next.stage==='prepare'?'準備：白を下、黄色を上へ':CubeBeginner.guides.find(g=>g.id===next.stage).title} · 全体で残り${remaining}手`:beginnerProgress||'現在の配色から、7段階でそろえる手順を作れます。';
+  $('beginner-next').textContent=next && !model.isSolved()?`次は ${next.face}${next.inverse?'′':''}：${moveDescription(next)}`:model.isSolved()?'完成です。シャッフルすると解法を試せます。':'「この状態の手順を作る」で始めましょう。';
+  $('beginner-moves').replaceChildren();
+  if(next && !model.isSolved())for(let i=beginnerIndex;i<beginnerSteps.length && beginnerSteps[i].stage===next.stage;i++){
+    const step=beginnerSteps[i],item=document.createElement('li');item.className='solution-chip';if(i===beginnerIndex)item.setAttribute('aria-current','step');
+    const number=document.createElement('span');number.className='solution-number';number.textContent=String(i-beginnerIndex+1);
+    const label=document.createElement('strong');label.textContent=step.face+(step.inverse?'′':'');item.title=moveDescription(step);item.setAttribute('aria-label',moveDescription(step));item.append(number,label);$('beginner-moves').append(item);
+  }
+}
+function stopTimer() { if(running) elapsed+=performance.now()-startedAt;running=false; }
+function toast(message) { $('toast').textContent=message;$('toast').classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>$('toast').classList.remove('show'),4000); }
+function cubieTranslation(c) {
+  return `translate3d(${c.pos[0]*82}px,${c.pos[1]*82}px,${c.pos[2]*82}px)`;
+}
+async function animateLayer(face, fromAngle, angle, duration=180) {
+  const f=moves[face], axis='XYZ'[f.axis];
+  const selected=model.cubies.filter(c=>c.pos[f.axis]===f.layer);
+  if(!reducedMotion && duration>0) {
+    await Promise.all(selected.map(c=>{
+      const el=elements.get(c.id), base=cubieTranslation(c);
+      return el.animate([{transform:`rotate${axis}(${fromAngle}deg) ${base}`},{transform:`rotate${axis}(${angle}deg) ${base}`}],{duration,easing:'cubic-bezier(.3,.05,.2,1)'}).finished;
+    }));
+  }
+}
+async function animateTurn(face, reverse, duration=180, fromAngle=0) {
+  await animateLayer(face,fromAngle,moves[face].sign*(reverse?-90:90),duration);
+  model.turn(face,reverse);
+  trackBeginnerMove(face,reverse);
+  solutionPath=model.isSolved()?[]:recordMove(solutionPath,face,reverse);
+  renderCube();
+}
+async function turn(face,reverse=inverse,fromAngle=0) {
+  if(busy) return;
+  busy=true;
+  if(!running) { if(challenge && model.isSolved()) elapsed=0;running=true;startedAt=performance.now(); }
+  renderStats();
+  await animateTurn(face,reverse,180,fromAngle);
+  history.push({face,inverse:reverse});moveCount++;busy=false;
+  if(model.isSolved()) { stopTimer();toast(challenge?`クリア！ ${moveCount}手で6面がそろいました。`:'6つの面がそろいました！'); }
+  renderStats();renderTime();
+}
+function setDirection(reverse) {
+  inverse=reverse;
+  $('clockwise').classList.toggle('active',!reverse);$('counterclockwise').classList.toggle('active',reverse);
+  $('clockwise').setAttribute('aria-pressed',String(!reverse));$('counterclockwise').setAttribute('aria-pressed',String(reverse));
+}
+document.querySelectorAll('[data-face]').forEach(b=>b.addEventListener('click',()=>turn(b.dataset.face)));
+$('clockwise').onclick=()=>setDirection(false);$('counterclockwise').onclick=()=>setDirection(true);
+$('undo').onclick=async()=>{
+  if(busy||!history.length)return;
+  busy=true;renderStats();const last=history.pop();await animateTurn(last.face,!last.inverse);
+  moveCount=Math.max(0,moveCount-1);busy=false;if(model.isSolved())stopTimer();renderStats();renderTime();
+};
+$('shuffle').onclick=async()=>{
+  if(busy)return;
+  busy=true;stopTimer();elapsed=0;history=[];moveCount=0;challenge=true;solutionPath=[];invalidateBeginner();model.reset();renderCube();renderStats();renderTime();
+  let lastAxis=-1;
+  for(let i=0;i<22;i++) {
+    const candidates=Object.keys(faces).filter(face=>faces[face].axis!==lastAxis);
+    const face=candidates[Math.floor(Math.random()*candidates.length)];lastAxis=faces[face].axis;
+    await animateTurn(face,Math.random()<.5,55);
+  }
+  busy=false;renderStats();toast('準備OK！ 最初の一手からタイムを計ります。');
+};
+$('reset').onclick=()=>{
+  if(busy)return;
+  model.reset();history=[];moveCount=0;solutionPath=[];invalidateBeginner();stopTimer();elapsed=0;challenge=false;renderCube();renderStats();renderTime();toast('キューブを初期状態に戻しました。');
+};
+$('solution-toggle').onclick=()=>{
+  solutionVisible=!solutionVisible;if(solutionVisible)beginnerVisible=false;renderStats();
+  if(solutionVisible)showDetails($('solution-panel'));
+};
+$('solution-step').onclick=async()=>{
+  if(busy || model.isSolved())return;
+  const next=solutionFor(solutionPath)[0];
+  if(next)await turn(next.face,next.inverse);
+};
+$('beginner-toggle').onclick=()=>{
+  beginnerVisible=!beginnerVisible;if(beginnerVisible)solutionVisible=false;renderStats();
+  if(beginnerVisible)showDetails($('beginner-panel'));
+};
+$('dock-close').onclick=()=>{
+  beginnerVisible=false;solutionVisible=false;renderStats();
+  $('control-scroll').scrollTo({top:0,behavior:reducedMotion?'auto':'smooth'});
+};
+$('beginner-calculate').onclick=async()=>{
+  if(busy || drag)return;
+  busy=true;beginnerCalculating=true;invalidateBeginner('手順を作っています…');renderStats();
+  try {
+    const answer=await CubeBeginner.plan(model,{onProgress:title=>{beginnerProgress=`手順を作っています：${title}`;renderBeginner();renderDock();}});
+    beginnerSteps=answer.steps;beginnerIndex=0;beginnerStage=answer.steps.find(s=>s.stage!=='prepare')?.stage||'cross';beginnerProgress='';
+  } catch(error) {
+    invalidateBeginner('手順を作れませんでした。もう一度試してください。');toast('手順を作れませんでした。もう一度試してください。');
+    console.error(error);
+  } finally {busy=false;beginnerCalculating=false;renderStats();}
+};
+$('beginner-step').onclick=async()=>{
+  if(busy || !beginnerSteps || model.isSolved())return;
+  const next=beginnerSteps[beginnerIndex];if(next)await turn(next.face,next.inverse);
+};
+function renderView() {orbit.style.transform=`rotateX(${viewX}deg) rotateY(${viewY}deg)`;}
+$('view-reset').onclick=()=>{viewX=-24;viewY=-34;renderView();};
+let drag=null;
+function dragView() {
+  const origin=orbit.getBoundingClientRect(), rect=scene.getBoundingClientRect();
+  const style=getComputedStyle(scene), center=style.perspectiveOrigin.split(' ').map(parseFloat);
+  return {
+    x:viewX,y:viewY,scale:parseFloat(getComputedStyle(orbit).scale)||1,
+    perspective:parseFloat(style.perspective)||1100,
+    offsetX:origin.left-rect.left-(center[0]||rect.width/2),
+    offsetY:origin.top-rect.top-(center[1]||rect.height/2)
+  };
+}
+scene.addEventListener('pointerdown',e=>{
+  if(e.button!==0 || drag)return;
+  const side=e.target.closest('.cubie-face'), tile=side?.querySelector('.sticker');
+  if(tile && busy)return;
+  const c=tile && model.cubies.find(c=>c.id===tile.closest('.cubie').dataset.cubie);
+  drag={pointerId:e.pointerId,x:e.clientX,y:e.clientY,tile:!!tile,pos:c?[...c.pos]:null,side:side?.dataset.side,view:dragView(),move:null,angle:0};
+  if(tile){busy=true;renderStats();}
+  scene.setPointerCapture(e.pointerId);scene.focus({preventScroll:true});e.preventDefault();
+});
+scene.addEventListener('pointermove',e=>{
+  if(!drag || drag.pointerId!==e.pointerId)return;
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.tile) {
+    viewY+=dx*.4;viewX=Math.max(-85,Math.min(85,viewX-dy*.4));drag.x=e.clientX;drag.y=e.clientY;renderView();return;
+  }
+  if(!drag.move) {
+    if(Math.hypot(dx,dy)<8)return;
+    drag.move=pickDragMove(drag.pos,drag.side,dx,dy,drag.view);
+    if(!drag.move)return;
+    busy=true;renderStats();scene.classList.add('turning');
+  }
+  const {face,unit}=drag.move, f=moves[face];
+  drag.angle=Math.max(-100,Math.min(100,(dx*unit[0]+dy*unit[1])*.8/drag.view.scale));
+  for(const c of model.cubies)if(c.pos[f.axis]===f.layer) {
+    const el=elements.get(c.id);el.classList.add('selected-layer');
+    el.style.transform=`rotate${'XYZ'[f.axis]}(${drag.angle}deg) ${cubieTranslation(c)}`;
+  }
+});
+async function finishDrag(e,cancel=false) {
+  if(!drag || drag.pointerId!==e.pointerId)return;
+  const gesture=drag;drag=null;
+  scene.classList.remove('turning');elements.forEach(el=>el.classList.remove('selected-layer'));
+  if(scene.hasPointerCapture(e.pointerId))scene.releasePointerCapture(e.pointerId);
+  if(!gesture.move){if(gesture.tile){busy=false;renderStats();}return;}
+  if(!cancel && Math.abs(gesture.angle)>=20) {
+    busy=false;
+    await turn(gesture.move.face,Math.sign(gesture.angle)!==moves[gesture.move.face].sign,gesture.angle);
+  } else {
+    await animateLayer(gesture.move.face,gesture.angle,0,120);
+    renderCube();busy=false;renderStats();
+  }
+}
+scene.addEventListener('pointerup',e=>finishDrag(e));
+scene.addEventListener('pointercancel',e=>finishDrag(e,true));
+scene.addEventListener('lostpointercapture',e=>finishDrag(e,true));
+window.addEventListener('keydown',e=>{
+  if($('help-dialog').open || e.repeat || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+  if(drag)return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();$('undo').click();return;}
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  const face=e.key.toUpperCase();
+  if(Object.hasOwn(faces,face)){e.preventDefault();turn(face,e.shiftKey||inverse);}
+  if(e.key.startsWith('Arrow')) {
+    e.preventDefault();if(e.key==='ArrowLeft')viewY-=12;if(e.key==='ArrowRight')viewY+=12;if(e.key==='ArrowUp')viewX=Math.min(85,viewX+12);if(e.key==='ArrowDown')viewX=Math.max(-85,viewX-12);renderView();
+  }
+});
+$('help').onclick=()=>$('help-dialog').showModal();
+for(const id of ['close-help','start-playing'])$(id).onclick=()=>$('help-dialog').close();
+$('help-dialog').addEventListener('click',e=>{if(e.target===$('help-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
+function fitCubeToScene() {
+  if(!scene.clientWidth || !scene.clientHeight)return;
+  orbit.style.scale=String(Math.max(.2,Math.min(1.1,(scene.clientWidth-36)/400,(scene.clientHeight-12)/400)));
+}
+if(typeof ResizeObserver!=='undefined')new ResizeObserver(fitCubeToScene).observe(scene);
+window.addEventListener('resize',fitCubeToScene);
+setInterval(renderTime,100);renderCube();renderStats();renderTime();fitCubeToScene();
+
+});</script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header">
+      <a class="brand" href="./" aria-label="CUBE STUDIO ホーム"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>CUBE<span class="brand-light">STUDIO</span></a>
+      <span class="header-note">小さなキューブ、大きなひらめき。</span>
+      <button class="help-button" id="help" aria-label="遊び方を見る">? <span>遊び方</span></button>
+    </header>
+    <main>
+      <div class="intro"><div><p class="eyebrow"><span></span> YOUR DAILY BRAIN BREAK</p><h1>ひと回し、してみよう。</h1><p class="intro-copy">6つの色をそろえる、ちょっとした挑戦。</p></div><div class="cube-label"><span class="label-grid" aria-hidden="true">▦</span><div><strong>クラシック</strong><small>3 × 3 × 3</small></div></div></div>
+      <div class="workspace">
+        <section class="play-panel" aria-label="キューブのプレイエリア">
+          <div class="play-top"><span class="status-pill" id="status"><i></i> そろっています</span><button class="text-button" id="view-reset" title="視点を最初の向きに戻す"><span aria-hidden="true">↗</span> 視点を戻す</button></div>
+          <div class="scene" id="scene" tabindex="0" role="img" aria-label="3Dキューブ。色のマスをドラッグして列を回転。背景のドラッグまたは矢印キーで視点を変更。面のボタンやキーでも回せます。"><div class="orbit" id="orbit"><div class="cube" id="cube"></div></div><div class="ground-shadow"></div></div>
+          <div class="drag-hint"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 13V5a2 2 0 0 1 4 0v6-2a2 2 0 0 1 4 0v3a2 2 0 0 1 4 0v3c0 5-3 7-7 7-3 0-5-2-7-5l-2-3a2 2 0 0 1 3-2l1 1Z"/></svg> 色のマスをドラッグで回転 · 背景で視点変更</div>
+          <div class="stats"><div><span>手数</span><strong id="moves">0<small> moves</small></strong></div><div><span>タイム</span><strong id="time">00:00<small>.0</small></strong></div><button class="undo" id="undo" disabled><span aria-hidden="true">↶</span> 1手戻す</button></div>
+        </section>
+        <div class="control-column">
+          <section class="guide-dock" id="guide-dock" aria-label="キューブを見ながら手順を進める" hidden>
+            <div class="dock-heading"><p id="dock-title">手順を進める</p><button id="dock-close" class="close-button" aria-label="手順を閉じて通常操作に戻る">×</button></div>
+            <p id="dock-next" aria-live="polite"></p>
+            <div class="dock-actions"><button class="reset-button" id="beginner-calculate" hidden>この状態の手順を作る</button><button class="primary-button" id="beginner-step" disabled hidden>解法の次の1手 <span aria-hidden="true">→</span></button><button class="primary-button" id="solution-step" disabled hidden>次の1手を回す <span aria-hidden="true">→</span></button></div>
+          </section>
+          <div class="control-scroll" id="control-scroll" tabindex="0" role="region" aria-label="操作と解法の説明">
+        <aside class="control-panel">
+          <div class="panel-heading"><h2>キューブを回す</h2><span>MOVE</span></div><p class="panel-copy">マスを直接ドラッグ。ボタンでも回せます。</p>
+          <div class="direction" role="group" aria-label="回転方向"><button id="clockwise" class="active" aria-pressed="true"><span aria-hidden="true">↻</span> 時計回り</button><button id="counterclockwise" aria-pressed="false"><span aria-hidden="true">↺</span> 反時計回り</button></div>
+          <div class="face-grid" id="face-controls">
+            <button class="face-button" data-face="U"><span class="face-dot" style="--face:#e8b93a"></span><strong>U</strong><span>上面</span></button>
+            <button class="face-button" data-face="F"><span class="face-dot" style="--face:#56a887"></span><strong>F</strong><span>前面</span></button>
+            <button class="face-button" data-face="R"><span class="face-dot" style="--face:#e06457"></span><strong>R</strong><span>右面</span></button>
+            <button class="face-button" data-face="D"><span class="face-dot white" style="--face:#f5f4e9"></span><strong>D</strong><span>下面</span></button>
+            <button class="face-button" data-face="B"><span class="face-dot" style="--face:#558fc5"></span><strong>B</strong><span>背面</span></button>
+            <button class="face-button" data-face="L"><span class="face-dot" style="--face:#ed9655"></span><strong>L</strong><span>左面</span></button>
+          </div>
+          <p class="keyboard-hint"><kbd>Shift</kbd> + 面のキーで反時計回り</p>
+          <div class="actions"><button class="primary-button" id="shuffle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m17 3 4 4-4 4M3 17c6 0 7-10 14-10h4M17 13l4 4-4 4M3 7c3 0 5 3 6 5m5 4c1 1 2 1 7 1"/></svg> シャッフルして挑戦</button><button class="reset-button" id="reset"><span aria-hidden="true">⟲</span> キューブをリセット</button><button class="solution-toggle" id="solution-toggle" aria-expanded="false" aria-controls="solution-panel">正解手順を見る</button></div>
+          <button class="solution-toggle beginner-toggle" id="beginner-toggle" aria-expanded="false" aria-controls="beginner-panel">初心者向けの解法を学ぶ</button>
+          <div class="tip"><span class="tip-icon" aria-hidden="true">✦</span><p><strong>まずは、白の1段目から。</strong>側面の色も中心に合わせるのがコツ。</p></div>
+        </aside>
+      <section class="history-panel" aria-label="回転の履歴"><div class="history-label"><span aria-hidden="true">↳</span> 回転の履歴</div><div id="history" class="history"><span class="history-empty">最初の一手を回してみよう。</span></div><span class="history-note">最新の12手を表示</span></section>
+      <section class="solution-panel" id="solution-panel" aria-labelledby="solution-title" hidden>
+        <div class="solution-heading"><div><p class="eyebrow">BACK TO SOLVED</p><h2 id="solution-title">完成までの正解手順</h2></div><span id="solution-count" class="solution-count">完成</span></div>
+        <div class="solution-next-row"><p id="solution-next">6つの面がそろっています。</p></div>
+        <ol class="solution-list" id="solution-list" aria-label="現在のキューブをそろえる手順"></ol>
+        <p class="solution-legend">左から順番に90°ずつ。<strong>′</strong> は反時計回りです。回転方向は、その面を正面から見た向きです。</p>
+        <p class="solution-note">シャッフルとその後の操作を逆にたどる手順です。最短手順ではありません。自分で回したり1手戻したりすると、現在の状態に合わせて更新されます。</p>
+      </section>
+      <section class="beginner-panel" id="beginner-panel" aria-labelledby="beginner-title" hidden>
+        <div class="solution-heading"><div><p class="eyebrow">LEARN LAYER BY LAYER</p><h2 id="beginner-title">初心者の7段階解法</h2></div><span class="solution-count">白 → 中段 → 黄色</span></div>
+        <p class="beginner-intro">白い面と側面の1段目をそろえ、次に中段、最後に黄色の段を仕上げます。白を下（D）、黄色を上（U）にして進めましょう。</p>
+        <p class="solution-note">基本手順は、対象を正面にした持ち方での表記です。アプリでは視点を変えても面名は固定。下の実行手順は、このアプリの面名に合わせて表示します。</p>
+        <nav id="beginner-stages" class="beginner-stages" aria-label="解法の段階"></nav>
+        <div class="beginner-lesson"><div class="beginner-diagram"><div id="beginner-goal-face" class="goal-face" role="img"></div><small id="beginner-diagram-label">目標のイメージ</small></div><div class="beginner-explanation"><h3 id="beginner-stage-title"></h3><p id="beginner-goal" class="beginner-goal"></p><p id="beginner-text"></p><div id="beginner-formulas" class="beginner-formulas"></div><p id="beginner-hint" class="beginner-hint"></p></div></div>
+        <div class="beginner-plan"><div class="beginner-plan-heading"><h3>今のキューブでやってみる</h3></div><p id="beginner-progress">現在の配色から、7段階でそろえる手順を作れます。</p><div class="solution-next-row"><p id="beginner-next">まずは「この状態の手順を作る」を押してください。</p></div><ol id="beginner-moves" class="solution-list" aria-label="現在の段階で残っている回転"></ol><p class="solution-legend">一覧は今の段階で残っている手順です。′ は反時計回り、2 は180°。ボタンは90°ずつ実行します。方向は各面を正面から見た向きです。</p><p class="solution-note">基本手順を組み合わせる学習用の解法です。手動で別の回転をしたときは、手順を作り直せます。中央の列を動かした場合は、最初に全体の向きを整える手順が入ります。最後の段階は、途中で下段が崩れて見えても続けてください。</p></div>
+        <p class="beginner-sources">解法の参考：<a href="https://rubiks.com/solve-guide" target="_blank" rel="noopener noreferrer">Rubik’s公式ガイド</a> · <a href="https://www.cube.academy/how-to-solve-a-rubiks-cube" target="_blank" rel="noopener noreferrer">Cube.Academy</a> · <a href="https://ruwix.com/the-rubiks-cube/how-to-solve-the-rubiks-cube-beginners-method/" target="_blank" rel="noopener noreferrer">Ruwixの7段階解法</a></p>
+      </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <dialog id="help-dialog"><div class="dialog-top"><p class="eyebrow">HOW TO PLAY</p><button id="close-help" class="close-button" aria-label="遊び方を閉じる">×</button></div><h2>6つの面を、同じ色に。</h2><p>各面の9マスを同じ色にそろえるパズルです。まずは「シャッフルして挑戦」で始めましょう。</p><ul><li><strong>直接回す：</strong>色のマスをつかんで、回したい方向へドラッグ。指を離すと90°にそろいます。小さく動かして離すと元に戻ります。中央の列も回せます。</li><li><strong>視点を変える：</strong>キューブの外の背景をドラッグ。矢印キーでも動かせます。</li><li><strong>ボタンで回す：</strong>U（上）・D（下）・F（前）・B（背）・R（右）・L（左）のボタンまたはキー。</li><li><strong>逆に回す：</strong>ボタンは「反時計回り」を選択。キー操作では Shift を押しながら。ドラッグは指を動かした方向に回ります。</li><li><strong>1手戻す：</strong>ボタンまたは Ctrl / ⌘ + Z。</li></ul><p class="dialog-note">U・Fなどの面の名前は視点を動かしても変わりません。中央の列の回転は履歴に M・E・S で表示します。タイマーは最初に回転を確定したときから始まります。</p><button class="primary-button" id="start-playing">さっそく遊ぶ <span aria-hidden="true">↗</span></button></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

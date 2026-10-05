@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f0">
+  <meta name="description" content="ブラウザで遊べる3Dルービックキューブ。色のマスをドラッグして、指の動きでキューブを回そう。">
+  <title>CUBE STUDIO | ルービックキューブ</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23212724'/%3E%3Cpath d='M7 7h8v8H7zm10 0h8v8h-8zM7 17h8v8H7z' fill='%23cbef76'/%3E%3Cpath d='M17 17h8v8h-8z' fill='%23f09056'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="cube.js"></script>
+  <script defer src="beginner.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header">
+      <a class="brand" href="./" aria-label="CUBE STUDIO ホーム"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>CUBE<span class="brand-light">STUDIO</span></a>
+      <span class="header-note">小さなキューブ、大きなひらめき。</span>
+      <button class="help-button" id="help" aria-label="遊び方を見る">? <span>遊び方</span></button>
+    </header>
+    <main>
+      <div class="intro"><div><p class="eyebrow"><span></span> YOUR DAILY BRAIN BREAK</p><h1>ひと回し、してみよう。</h1><p class="intro-copy">6つの色をそろえる、ちょっとした挑戦。</p></div><div class="cube-label"><span class="label-grid" aria-hidden="true">▦</span><div><strong>クラシック</strong><small>3 × 3 × 3</small></div></div></div>
+      <div class="workspace">
+        <section class="play-panel" aria-label="キューブのプレイエリア">
+          <div class="play-top"><span class="status-pill" id="status"><i></i> そろっています</span><button class="text-button" id="view-reset" title="視点を最初の向きに戻す"><span aria-hidden="true">↗</span> 視点を戻す</button></div>
+          <div class="scene" id="scene" tabindex="0" role="img" aria-label="3Dキューブ。色のマスをドラッグして列を回転。背景のドラッグまたは矢印キーで視点を変更。面のボタンやキーでも回せます。"><div class="orbit" id="orbit"><div class="cube" id="cube"></div></div><div class="ground-shadow"></div></div>
+          <div class="drag-hint"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 13V5a2 2 0 0 1 4 0v6-2a2 2 0 0 1 4 0v3a2 2 0 0 1 4 0v3c0 5-3 7-7 7-3 0-5-2-7-5l-2-3a2 2 0 0 1 3-2l1 1Z"/></svg> 色のマスをドラッグで回転 · 背景で視点変更</div>
+          <div class="stats"><div><span>手数</span><strong id="moves">0<small> moves</small></strong></div><div><span>タイム</span><strong id="time">00:00<small>.0</small></strong></div><button class="undo" id="undo" disabled><span aria-hidden="true">↶</span> 1手戻す</button></div>
+        </section>
+        <div class="control-column">
+          <section class="guide-dock" id="guide-dock" aria-label="キューブを見ながら手順を進める" hidden>
+            <div class="dock-heading"><p id="dock-title">手順を進める</p><button id="dock-close" class="close-button" aria-label="手順を閉じて通常操作に戻る">×</button></div>
+            <p id="dock-next" aria-live="polite"></p>
+            <div class="dock-actions"><button class="reset-button" id="beginner-calculate" hidden>この状態の手順を作る</button><button class="primary-button" id="beginner-step" disabled hidden>解法の次の1手 <span aria-hidden="true">→</span></button><button class="primary-button" id="solution-step" disabled hidden>次の1手を回す <span aria-hidden="true">→</span></button></div>
+          </section>
+          <div class="control-scroll" id="control-scroll" tabindex="0" role="region" aria-label="操作と解法の説明">
+        <aside class="control-panel">
+          <div class="panel-heading"><h2>キューブを回す</h2><span>MOVE</span></div><p class="panel-copy">マスを直接ドラッグ。ボタンでも回せます。</p>
+          <div class="direction" role="group" aria-label="回転方向"><button id="clockwise" class="active" aria-pressed="true"><span aria-hidden="true">↻</span> 時計回り</button><button id="counterclockwise" aria-pressed="false"><span aria-hidden="true">↺</span> 反時計回り</button></div>
+          <div class="face-grid" id="face-controls">
+            <button class="face-button" data-face="U"><span class="face-dot" style="--face:#e8b93a"></span><strong>U</strong><span>上面</span></button>
+            <button class="face-button" data-face="F"><span class="face-dot" style="--face:#56a887"></span><strong>F</strong><span>前面</span></button>
+            <button class="face-button" data-face="R"><span class="face-dot" style="--face:#e06457"></span><strong>R</strong><span>右面</span></button>
+            <button class="face-button" data-face="D"><span class="face-dot white" style="--face:#f5f4e9"></span><strong>D</strong><span>下面</span></button>
+            <button class="face-button" data-face="B"><span class="face-dot" style="--face:#558fc5"></span><strong>B</strong><span>背面</span></button>
+            <button class="face-button" data-face="L"><span class="face-dot" style="--face:#ed9655"></span><strong>L</strong><span>左面</span></button>
+          </div>
+          <p class="keyboard-hint"><kbd>Shift</kbd> + 面のキーで反時計回り</p>
+          <div class="actions"><button class="primary-button" id="shuffle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m17 3 4 4-4 4M3 17c6 0 7-10 14-10h4M17 13l4 4-4 4M3 7c3 0 5 3 6 5m5 4c1 1 2 1 7 1"/></svg> シャッフルして挑戦</button><button class="reset-button" id="reset"><span aria-hidden="true">⟲</span> キューブをリセット</button><button class="solution-toggle" id="solution-toggle" aria-expanded="false" aria-controls="solution-panel">正解手順を見る</button></div>
+          <button class="solution-toggle beginner-toggle" id="beginner-toggle" aria-expanded="false" aria-controls="beginner-panel">初心者向けの解法を学ぶ</button>
+          <div class="tip"><span class="tip-icon" aria-hidden="true">✦</span><p><strong>まずは、白の1段目から。</strong>側面の色も中心に合わせるのがコツ。</p></div>
+        </aside>
+      <section class="history-panel" aria-label="回転の履歴"><div class="history-label"><span aria-hidden="true">↳</span> 回転の履歴</div><div id="history" class="history"><span class="history-empty">最初の一手を回してみよう。</span></div><span class="history-note">最新の12手を表示</span></section>
+      <section class="solution-panel" id="solution-panel" aria-labelledby="solution-title" hidden>
+        <div class="solution-heading"><div><p class="eyebrow">BACK TO SOLVED</p><h2 id="solution-title">完成までの正解手順</h2></div><span id="solution-count" class="solution-count">完成</span></div>
+        <div class="solution-next-row"><p id="solution-next">6つの面がそろっています。</p></div>
+        <ol class="solution-list" id="solution-list" aria-label="現在のキューブをそろえる手順"></ol>
+        <p class="solution-legend">左から順番に90°ずつ。<strong>′</strong> は反時計回りです。回転方向は、その面を正面から見た向きです。</p>
+        <p class="solution-note">シャッフルとその後の操作を逆にたどる手順です。最短手順ではありません。自分で回したり1手戻したりすると、現在の状態に合わせて更新されます。</p>
+      </section>
+      <section class="beginner-panel" id="beginner-panel" aria-labelledby="beginner-title" hidden>
+        <div class="solution-heading"><div><p class="eyebrow">LEARN LAYER BY LAYER</p><h2 id="beginner-title">初心者の7段階解法</h2></div><span class="solution-count">白 → 中段 → 黄色</span></div>
+        <p class="beginner-intro">白い面と側面の1段目をそろえ、次に中段、最後に黄色の段を仕上げます。白を下（D）、黄色を上（U）にして進めましょう。</p>
+        <p class="solution-note">基本手順は、対象を正面にした持ち方での表記です。アプリでは視点を変えても面名は固定。下の実行手順は、このアプリの面名に合わせて表示します。</p>
+        <nav id="beginner-stages" class="beginner-stages" aria-label="解法の段階"></nav>
+        <div class="beginner-lesson"><div class="beginner-diagram"><div id="beginner-goal-face" class="goal-face" role="img"></div><small id="beginner-diagram-label">目標のイメージ</small></div><div class="beginner-explanation"><h3 id="beginner-stage-title"></h3><p id="beginner-goal" class="beginner-goal"></p><p id="beginner-text"></p><div id="beginner-formulas" class="beginner-formulas"></div><p id="beginner-hint" class="beginner-hint"></p></div></div>
+        <div class="beginner-plan"><div class="beginner-plan-heading"><h3>今のキューブでやってみる</h3></div><p id="beginner-progress">現在の配色から、7段階でそろえる手順を作れます。</p><div class="solution-next-row"><p id="beginner-next">まずは「この状態の手順を作る」を押してください。</p></div><ol id="beginner-moves" class="solution-list" aria-label="現在の段階で残っている回転"></ol><p class="solution-legend">一覧は今の段階で残っている手順です。′ は反時計回り、2 は180°。ボタンは90°ずつ実行します。方向は各面を正面から見た向きです。</p><p class="solution-note">基本手順を組み合わせる学習用の解法です。手動で別の回転をしたときは、手順を作り直せます。中央の列を動かした場合は、最初に全体の向きを整える手順が入ります。最後の段階は、途中で下段が崩れて見えても続けてください。</p></div>
+        <p class="beginner-sources">解法の参考：<a href="https://rubiks.com/solve-guide" target="_blank" rel="noopener noreferrer">Rubik’s公式ガイド</a> · <a href="https://www.cube.academy/how-to-solve-a-rubiks-cube" target="_blank" rel="noopener noreferrer">Cube.Academy</a> · <a href="https://ruwix.com/the-rubiks-cube/how-to-solve-the-rubiks-cube-beginners-method/" target="_blank" rel="noopener noreferrer">Ruwixの7段階解法</a></p>
+      </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <dialog id="help-dialog"><div class="dialog-top"><p class="eyebrow">HOW TO PLAY</p><button id="close-help" class="close-button" aria-label="遊び方を閉じる">×</button></div><h2>6つの面を、同じ色に。</h2><p>各面の9マスを同じ色にそろえるパズルです。まずは「シャッフルして挑戦」で始めましょう。</p><ul><li><strong>直接回す：</strong>色のマスをつかんで、回したい方向へドラッグ。指を離すと90°にそろいます。小さく動かして離すと元に戻ります。中央の列も回せます。</li><li><strong>視点を変える：</strong>キューブの外の背景をドラッグ。矢印キーでも動かせます。</li><li><strong>ボタンで回す：</strong>U（上）・D（下）・F（前）・B（背）・R（右）・L（左）のボタンまたはキー。</li><li><strong>逆に回す：</strong>ボタンは「反時計回り」を選択。キー操作では Shift を押しながら。ドラッグは指を動かした方向に回ります。</li><li><strong>1手戻す：</strong>ボタンまたは Ctrl / ⌘ + Z。</li></ul><p class="dialog-note">U・Fなどの面の名前は視点を動かしても変わりません。中央の列の回転は履歴に M・E・S で表示します。タイマーは最初に回転を確定したときから始まります。</p><button class="primary-button" id="start-playing">さっそく遊ぶ <span aria-hidden="true">↗</span></button></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
