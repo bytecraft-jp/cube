@@ -2,6 +2,20 @@
 
 **このフォルダーの `index.html` をブラウザで開くだけで遊べます。**
 
+## GitHub Pagesで公開
+
+公開URL（Pagesを有効にした後）：https://bytecraft-jp.github.io/cube/
+
+このリポジトリの [Settings → Pages](https://github.com/bytecraft-jp/cube/settings/pages) で、次の設定を保存してください。
+
+1. **Build and deployment → Source**：`Deploy from a branch`
+2. **Branch**：`main`、フォルダー：`/ (root)`
+3. **Save** を押し、公開処理の完了後に公開URLを開く
+
+ルートの `index.html` にアプリ本体がすべて入っているため、追加のインストールやビルド設定は不要です。`.nojekyll` で静的ファイルをそのまま公開します。以後はソース編集後に `node cube-app/build.cjs` を実行し、更新した `index.html` を `main` にプッシュすると公開サイトも更新されます。
+
+## 遊び方
+
 色のマスをドラッグすると、その方向に列が回ります。指を離すと90°にそろい、短いドラッグでは元に戻ります。中央の列も回転できます。キューブの外の背景をドラッグして視点を変更します。
 
 面のボタンまたは U / D / F / B / R / L キーでも回転します。Shift で反時計回り、Ctrl / Command + Z で1手戻せます。「シャッフルして挑戦」で始めてください。
